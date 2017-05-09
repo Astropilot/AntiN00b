@@ -58,22 +58,29 @@ class sshCmd(Thread):
 		if self.ssh is not None:
 			ssh = self.ssh
 			for i in range(10):
-				ssh.exec_command("echo -e '\a'")
-				time.sleep(1)
+				ssh.exec_command("eject")
+				ssh.exec_command("xrandr --output AVG1 --rotate right")
+				time.sleep(4)
+				ssh.exec_command("xrandr --output AVG1 --rotate left")
+				time.sleep(4)
+				ssh.exec_command("xrandr --output AVG1 --rotate inverted")
+				time.sleep(4)
+				ssh.exec_command("xrandr --output AVG1 --rotate normal")
+				time.sleep(4)
 
 # 1. On bloque la connexion en root du daemon ssh
 
 writeConfig = False
 
-with open('', 'r') as file:
-	lines = file.readlines()
-	for line in lines:
-		if "PermitRootLogin no" in line:
-			writeConfig = True
+#with open('/etc/ssh/sshd_config', 'r') as file:
+#	lines = file.readlines()
+#	for line in lines:
+#		if "PermitRootLogin no" in line:
+#			writeConfig = True
 
-if writeConfig == True:
-	with open('/etc/ssh/sshd_config', 'a') as file:
-		file.writelines('PermitRootLogin no')
+#if writeConfig == True:
+with open('/etc/ssh/sshd_config', 'a') as file:
+	file.writelines('PermitRootLogin no')
 	
 # 2. On redemarre le daemon
 
