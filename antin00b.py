@@ -8,7 +8,6 @@ head = """
   / ___ \| | | | |_| | |\  | |_| | |_| | |_) |
  /_/   \_\_| |_|\__|_|_| \_|\___/ \___/|_.__/ 
                                               
-
                                                                 
                    ##########################                   
                    ####   Team R3V3RS3   ####                   
@@ -56,11 +55,12 @@ class sshCmd(Thread):
 		Thread.__init__(self)
 		self.ssh = getSshFromHost(host)
 	def run(self):
-		ssh = self.ssh
-		for i in range(10):
-			ssh.exec_command("echo -e '\a'")
-			time.sleep(1)
-		#print("End of detector")
+		if self.ssh is not None:
+			ssh = self.ssh
+			for i in range(10):
+				ssh.exec_command("echo -e '\a'")
+				time.sleep(1)
+			#print("End of detector")
 
 
 # 1. On bloque la connexion en root du daemon ssh
@@ -83,13 +83,18 @@ while 1:
 	
 		with open(SECURE_LOG, 'r') as file:
 			lines = file.readlines()
-			ip_noob = lines[-1][-2:]
+			ip_noob = ""
+			for line in lines:
+				if "Failed" in line:
+					start = line.index("192.168")+10
+					end = line.index("port")-1
+					ip_noob = line[start:end]
+			if ip_noob != "":
+				print("N00b detected: dinfo"+ip_noob)
 			
-			print("N00b detected: dinfo"+ip_noob)
+				print("N00b detector started")
+				sshCmd("dinfo"+ip_noob).start()
 			
-			print("N00b detector started...")
-			sshCmd("dinfo"+ip_noob).start()
-			
-			open(SECURE_LOG, 'w').close()
-			print("En attente de N00bs...")
+				open(SECURE_LOG, 'w').close()
+				print("En attente de N00bs...")
 			
