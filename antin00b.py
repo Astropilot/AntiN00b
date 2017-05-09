@@ -37,6 +37,7 @@ from threading import Thread
 
 
 SECURE_LOG = '/var/log/secure'
+SSHD_CONFIG = '/etc/ssh/sshd_config'
 
 def getSshFromHost(host):
 	ssh = None
@@ -61,26 +62,20 @@ class sshCmd(Thread):
 				ssh.exec_command("eject")
 				ssh.exec_command("xrandr --output AVG1 --rotate right")
 				time.sleep(4)
-				ssh.exec_command("xrandr --output AVG1 --rotate left")
-				time.sleep(4)
-				ssh.exec_command("xrandr --output AVG1 --rotate inverted")
-				time.sleep(4)
-				ssh.exec_command("xrandr --output AVG1 --rotate normal")
-				time.sleep(4)
 
 # 1. On bloque la connexion en root du daemon ssh
 
-writeConfig = False
+writeConfig = True
 
-#with open('/etc/ssh/sshd_config', 'r') as file:
-#	lines = file.readlines()
-#	for line in lines:
-#		if "PermitRootLogin no" in line:
-#			writeConfig = True
+with open(SSHD_CONFIG, 'r') as file:
+	lines = file.readlines()
+	for line in lines:
+		if "PermitRootLogin no" in line:
+			writeConfig = False
 
-#if writeConfig == True:
-with open('/etc/ssh/sshd_config', 'a') as file:
-	file.writelines('PermitRootLogin no')
+if writeConfig == True:
+	with open(SSHD_CONFIG, 'a') as file:
+		file.writelines('PermitRootLogin no')
 	
 # 2. On redemarre le daemon
 
@@ -111,4 +106,4 @@ while 1:
 			
 				open(SECURE_LOG, 'w').close()
 				print("En attente de N00bs...")
-	time.sleep(3)
+time.sleep(3)
