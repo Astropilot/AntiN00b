@@ -1,0 +1,95 @@
+# -*- coding: utf-8 -*-
+
+head = """
+################################################################
+     _          _   _ _   _  ___   ___  _     
+    / \   _ __ | |_(_) \ | |/ _ \ / _ \| |__  
+   / _ \ | '_ \| __| |  \| | | | | | | | '_ \ 
+  / ___ \| | | | |_| | |\  | |_| | |_| | |_) |
+ /_/   \_\_| |_|\__|_|_| \_|\___/ \___/|_.__/ 
+                                              
+
+                                                                
+                   ##########################                   
+                   ####   Team R3V3RS3   ####                   
+                   ##########################                   
+                   ##                      ##                   
+                   ##  Code : - Astro      ##                   
+                   ##                      ##                   
+                   ##########################                   
+                                                                
+                                                                
+################################################################
+"""
+print(head)
+
+# Ce C/C de l'entête n'est absolument pas une provocation ;)
+
+import os
+import time
+
+try:
+	import paramiko
+except ImportError:
+	os.system('python -m pip install paramiko')
+	import paramiko
+	
+from threading import Thread
+
+
+SECURE_LOG = '/var/log/secure'
+
+def getSshFromHost(host):
+	ssh = None
+	try:
+		ssh = paramiko.SSHClient()
+		ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+		ssh.connect(host, port=22, username="root", password="#TpLinux#")
+		print("Connecté à "+host)
+		
+	except:
+		print("Erreur de connexion sur "+host)
+	return ssh
+
+class sshCmd(Thread):
+	def __init__(self, host):
+		Thread.__init__(self)
+		self.ssh = getSshFromHost(host)
+	def run(self):
+		ssh = self.ssh
+		for i in range(10):
+			ssh.exec_command("echo -e '\a'")
+			time.sleep(1)
+		#print("End of detector")
+
+
+# 1. On bloque la connexion en root du daemon ssh
+
+with open('/etc/ssh/sshd_config', 'a') as file:
+	file.writelines('PermitRootLogin no')
+	
+# 2. On redemarre le daemon
+
+os.system('/etc/init.d/sshd restart')
+
+# 3. On écoute le fichier de log sshd
+
+open(SECURE_LOG, 'w').close()
+print("En attente de N00bs...")
+
+while 1:
+
+	if os.stat(SECURE_LOG).st_size > 0:
+	
+		with open(SECURE_LOG, 'r') as file:
+			lines = file.readlines()
+			ip_noob = lines[-1][-2:]
+			
+			print("N00b detected: dinfo"+ip_noob)
+			
+			print("N00b detector started...")
+			sshCmd("dinfo"+ip_noob).start()
+			
+			open(SECURE_LOG, 'w').close()
+			print("En attente de N00bs...")
+			
