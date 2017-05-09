@@ -105,4 +105,4 @@ while 1:
 			
 				open(SECURE_LOG, 'w').close()
 				print("En attente de N00bs...")
-time.sleep(3)
+	time.sleep(3)
