@@ -60,13 +60,20 @@ class sshCmd(Thread):
 			for i in range(10):
 				ssh.exec_command("echo -e '\a'")
 				time.sleep(1)
-			#print("End of detector")
-
 
 # 1. On bloque la connexion en root du daemon ssh
 
-with open('/etc/ssh/sshd_config', 'a') as file:
-	file.writelines('PermitRootLogin no')
+writeConfig = False
+
+with open('', 'r') as file:
+	lines = file.readlines()
+	for line in lines:
+		if "PermitRootLogin no" in line:
+			writeConfig = True
+
+if writeConfig == True:
+	with open('/etc/ssh/sshd_config', 'a') as file:
+		file.writelines('PermitRootLogin no')
 	
 # 2. On redemarre le daemon
 
@@ -97,4 +104,4 @@ while 1:
 			
 				open(SECURE_LOG, 'w').close()
 				print("En attente de N00bs...")
-			
+	time.sleep(3)
