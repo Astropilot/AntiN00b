@@ -45,10 +45,9 @@ def getSshFromHost(host):
 		ssh = paramiko.SSHClient()
 		ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 		ssh.connect(host, port=22, username="root", password="#TpLinux#")
-		print("Connecté à "+host)
 		
 	except:
-		print("Erreur de connexion sur "+host)
+		print("Impossible de se connecter au N00b "+host+", il n'est pas connecté ou protégé")
 	return ssh
 
 class sshCmd(Thread):
