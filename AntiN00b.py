@@ -30,7 +30,7 @@ import time
 try:
 	import paramiko
 except ImportError:
-	os.system('python -m pip install paramiko')
+	os.system('python -m pip install paramiko==2.0.4')
 	import paramiko
 	
 from threading import Thread
