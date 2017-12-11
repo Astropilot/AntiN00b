@@ -57,9 +57,9 @@ class sshCmd(Thread):
 	def run(self):
 		if self.ssh is not None:
 			ssh = self.ssh
-			for i in range(10):
+			for i in range(5):
 				ssh.exec_command("eject")
-				ssh.exec_command("xrandr --output AVG1 --rotate right")
+				ssh.exec_command("echo -e '\a' >/dev/tty9")
 				time.sleep(4)
 
 # 1. On bloque la connexion en root du daemon ssh
@@ -78,7 +78,7 @@ if writeConfig == True:
 	
 # 2. On redemarre le daemon
 
-os.system('/etc/init.d/sshd restart')
+os.system('service sshd restart')
 
 # 3. On écoute le fichier de log sshd
 
@@ -101,7 +101,7 @@ while 1:
 				print("N00b detected: dinfo"+ip_noob)
 			
 				print("N00b detector started")
-				sshCmd("dinfo"+ip_noob).start()
+				sshCmd("192.168.0."+ip_noob).start()
 			
 				open(SECURE_LOG, 'w').close()
 				print("En attente de N00bs...")
